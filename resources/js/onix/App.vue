@@ -18,7 +18,7 @@
       <div class="row">
         <div class="col-12">
           <nav class="main-nav">
-            <RouterLink to="/" class="logo">
+            <RouterLink to="/" class="logo" @click="goHome">
               <img :src="img('LOGO10.png')" alt="Onix Digital" />
             </RouterLink>
             <ul class="nav">
@@ -62,9 +62,9 @@
 
   <RouterView />
 
-  <ZeloChatbot />
+  <ZeloChatbot v-if="pageReady" />
 
-  <div class="side-float-actions">
+  <div v-if="pageReady" class="side-float-actions">
     <button
       type="button"
       class="theme-toggle"
@@ -97,7 +97,7 @@
         <div class="col-lg-3">
           <div class="about footer-item">
             <div class="logo">
-              <RouterLink to="/"><img :src="img('LOGO10.png')" alt="Proxwebs" /></RouterLink>
+              <RouterLink to="/" @click="goHome"><img :src="img('LOGO10.png')" alt="Proxwebs" /></RouterLink>
             </div>
             <ul class="footer-contact">
               <li>
@@ -220,6 +220,7 @@ import ZeloChatbot from './components/ZeloChatbot.vue';
 const router = useRouter();
 const THEME_KEY = 'onix-theme';
 const isDark = ref(false);
+const pageReady = ref(false);
 const newsletterEmail = ref('');
 const newsletterSending = ref(false);
 const newsletterMessage = ref('');
@@ -246,6 +247,25 @@ function closeMobileNav() {
     window.$(nav).stop(true, true).slideUp(200);
   } else if (nav) {
     nav.style.display = 'none';
+  }
+}
+
+function scrollToHomeStart() {
+  const el = document.getElementById('top');
+  if (el) {
+    const headerOffset = 80;
+    const y = el.getBoundingClientRect().top + window.scrollY - headerOffset;
+    window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+    return;
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function goHome(event) {
+  closeMobileNav();
+  if (router.currentRoute.value.path === '/') {
+    event.preventDefault();
+    scrollToHomeStart();
   }
 }
 
@@ -286,6 +306,11 @@ async function subscribeNewsletter() {
   }
 }
 
+function revealPage() {
+  document.getElementById('js-preloader')?.classList.add('loaded');
+  pageReady.value = true;
+}
+
 onMounted(async () => {
   try {
     applyTheme(localStorage.getItem(THEME_KEY) === 'dark');
@@ -293,6 +318,12 @@ onMounted(async () => {
     applyTheme(false);
   }
   await loadScriptsInOrder(onixLegacyScripts);
+
+  if (document.readyState === 'complete') {
+    revealPage();
+  } else {
+    window.addEventListener('load', revealPage, { once: true });
+  }
 });
 </script>
 

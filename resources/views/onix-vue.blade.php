@@ -13,6 +13,8 @@
         />
 
         <title>Proxwebs</title>
+        <link rel="icon" type="image/png" href="/onix/assets/images/LOGO10.png" />
+        <link rel="apple-touch-icon" href="/onix/assets/images/LOGO10.png" />
 
         <!-- Bootstrap core CSS -->
         <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />

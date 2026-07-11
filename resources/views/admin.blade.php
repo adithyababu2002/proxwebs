@@ -11,6 +11,8 @@
         />
         <link rel="stylesheet" href="/onix/assets/css/fontawesome.css" />
         <title>Proxwebs Admin</title>
+        <link rel="icon" type="image/png" href="/onix/assets/images/LOGO10.png" />
+        <link rel="apple-touch-icon" href="/onix/assets/images/LOGO10.png" />
         @vite(['resources/js/admin/main.js'])
         <script>
             (function () {

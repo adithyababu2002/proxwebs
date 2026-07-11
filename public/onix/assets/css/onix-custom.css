@@ -299,6 +299,15 @@
   margin-right: 0;
 }
 
+.contact-us .info span {
+  align-items: center;
+}
+
+.contact-us .info span i {
+  float: none;
+  flex-shrink: 0;
+}
+
 .contact-us form#contact {
   margin-left: 30px;
 }
@@ -350,11 +359,19 @@
 }
 
 /* ===== Sticky side actions (theme + WhatsApp) ===== */
+/* Keep floats/chat hidden while the preloader is visible */
+.js-preloader:not(.loaded) ~ .side-float-actions,
+.js-preloader:not(.loaded) ~ .zelo-chat {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
 .side-float-actions {
   position: fixed;
   top: 50%;
   right: 18px;
-  z-index: 9999;
+  z-index: 9998;
   transform: translateY(-50%);
   display: flex;
   flex-direction: column;
