@@ -16,7 +16,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::query()->updateOrCreate(
+        // First-time only: never overwrite an existing admin password/name on re-seed.
+        User::query()->firstOrCreate(
             ['email' => 'admin@proxwebs.com'],
             [
                 'name' => 'Proxwebs Admin',

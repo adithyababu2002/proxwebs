@@ -1,0 +1,95 @@
+name: Deploy to Hostinger
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: hostinger-production
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install JS dependencies and build assets
+        run: |
+          npm ci
+          npm run build
+
+      - name: Pull code + migrate on Hostinger (no seed)
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.HOSTINGER_HOST }}
+          username: ${{ secrets.HOSTINGER_USER }}
+          password: ${{ secrets.HOSTINGER_SSH_PASSWORD }}
+          port: ${{ secrets.HOSTINGER_PORT }}
+          script_stop: true
+          script: |
+            set -euo pipefail
+            APP_DIR="$HOME/domains/proxwebs.com/laravel"
+            cd "$APP_DIR"
+
+            if [ ! -f .env ]; then
+              echo "ERROR: .env missing — aborting"
+              exit 1
+            fi
+
+            echo "==> Fetching main"
+            git fetch origin main
+            echo "==> Updating tracked files only (.env + storage uploads stay)"
+            git reset --hard origin/main
+
+            echo "==> Composer install"
+            composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
+            php -d disable_functions= artisan package:discover --ansi || true
+
+            echo "==> Migrations only (NO db:seed)"
+            php -d disable_functions= artisan migrate --force
+
+            echo "==> Keep storage link for uploaded images"
+            php -d disable_functions= artisan storage:link 2>/dev/null || true
+
+            echo "==> Cache"
+            php -d disable_functions= artisan config:cache
+            php -d disable_functions= artisan route:cache
+            php -d disable_functions= artisan view:cache
+            chmod -R ug+rwx storage bootstrap/cache 2>/dev/null || true
+            echo "==> Code deploy done"
+
+      - name: Upload Vite build (does not touch storage uploads)
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.HOSTINGER_HOST }}
+          username: ${{ secrets.HOSTINGER_USER }}
+          password: ${{ secrets.HOSTINGER_SSH_PASSWORD }}
+          port: ${{ secrets.HOSTINGER_PORT }}
+          source: "public/build"
+          target: "/home/u913661220/domains/proxwebs.com/laravel"
+          overwrite: true
+
+      - name: Final cache refresh
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.HOSTINGER_HOST }}
+          username: ${{ secrets.HOSTINGER_USER }}
+          password: ${{ secrets.HOSTINGER_SSH_PASSWORD }}
+          port: ${{ secrets.HOSTINGER_PORT }}
+          script_stop: true
+          script: |
+            cd ~/domains/proxwebs.com/laravel
+            php -d disable_functions= artisan view:cache
+            php -d disable_functions= artisan config:cache
+            echo "Live deploy complete — uploads and DB data preserved"

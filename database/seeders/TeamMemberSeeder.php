@@ -112,14 +112,17 @@ class TeamMemberSeeder extends Seeder
             ],
         ];
 
+        // First-time only: skip entirely if team data already exists so deploys
+        // never overwrite admin edits.
+        if (TeamMember::query()->exists()) {
+            return;
+        }
+
         foreach ($members as $member) {
-            TeamMember::query()->updateOrCreate(
-                ['slug' => $member['slug']],
-                [
-                    ...$member,
-                    'is_active' => true,
-                ]
-            );
+            TeamMember::query()->create([
+                ...$member,
+                'is_active' => true,
+            ]);
         }
     }
 }
