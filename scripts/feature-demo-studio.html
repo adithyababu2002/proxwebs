@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Feature workflow demos</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0b1016;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      color: #e8eaed;
+      overflow: hidden;
+    }
+    .scene {
+      display: none;
+      width: 1280px;
+      height: 720px;
+      position: relative;
+      background: linear-gradient(160deg, #101820, #151d28 50%, #121820);
+      overflow: hidden;
+    }
+    .scene.active { display: block; }
+    .chrome {
+      height: 48px;
+      background: #0f1419;
+      border-bottom: 1px solid #243041;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 18px;
+    }
+    .chrome i { width: 10px; height: 10px; border-radius: 50%; display: block; }
+    .chrome i:nth-child(1) { background: #ff5f57; }
+    .chrome i:nth-child(2) { background: #febc2e; }
+    .chrome i:nth-child(3) { background: #28c840; }
+    .chrome b { margin-left: 10px; font-size: 14px; font-weight: 600; color: #9aa7b5; }
+    .panel {
+      margin: 28px 40px;
+      background: #1a222d;
+      border: 1px solid #2c3644;
+      border-radius: 18px;
+      padding: 28px;
+      min-height: 580px;
+      position: relative;
+      box-shadow: 0 20px 50px rgba(0,0,0,.35);
+    }
+    .panel h1 { font-size: 28px; margin-bottom: 8px; }
+    .panel p.sub { color: #9aa7b5; margin-bottom: 24px; font-size: 15px; }
+    .cursor {
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      border-radius: 50% 50% 50% 0;
+      background: #fff;
+      transform: rotate(-15deg);
+      box-shadow: 0 4px 12px rgba(0,0,0,.4);
+      z-index: 50;
+      pointer-events: none;
+      opacity: 0;
+    }
+    .cursor::after {
+      content: "";
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+      border: 2px solid rgba(3,164,237,.7);
+      opacity: 0;
+    }
+    .toast {
+      position: absolute;
+      right: 28px;
+      bottom: 28px;
+      background: #15241c;
+      border: 1px solid #1e3d30;
+      color: #8dffb0;
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #03a4ed;
+      color: #fff;
+      border: 0;
+      border-radius: 10px;
+      padding: 12px 18px;
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .btn.coral { background: #ff695f; }
+
+    /* Shared cards/rows */
+    .grid { display: grid; gap: 16px; }
+    .grid-3 { grid-template-columns: repeat(3, 1fr); }
+    .card {
+      background: #121820;
+      border: 2px solid #2c3644;
+      border-radius: 14px;
+      padding: 18px;
+      transition: border-color .25s, transform .25s, box-shadow .25s;
+    }
+    .card.selected {
+      border-color: #03a4ed;
+      box-shadow: 0 0 0 3px rgba(3,164,237,.2);
+      transform: translateY(-4px);
+    }
+    .row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #121820;
+      border: 1px solid #2c3644;
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 12px;
+    }
+    .toggle {
+      width: 46px;
+      height: 26px;
+      border-radius: 999px;
+      background: #3a4656;
+      position: relative;
+      transition: background .25s;
+    }
+    .toggle::after {
+      content: "";
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #fff;
+      transition: left .25s;
+    }
+    .toggle.on { background: #03a4ed; }
+    .toggle.on::after { left: 23px; }
+
+    /* Scene-specific */
+    .loader-preview {
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+    .spin {
+      width: 28px; height: 28px; border-radius: 50%;
+      border: 3px solid #334155; border-top-color: #03a4ed;
+      animation: spin 0.8s linear infinite;
+    }
+    .dots span {
+      display: inline-block; width: 8px; height: 8px; margin: 0 3px;
+      border-radius: 50%; background: #03a4ed;
+      animation: bounce 0.9s ease-in-out infinite;
+    }
+    .dots span:nth-child(2) { animation-delay: .15s; }
+    .dots span:nth-child(3) { animation-delay: .3s; }
+    .bar {
+      width: 70%; height: 6px; background: #334155; border-radius: 6px; overflow: hidden;
+    }
+    .bar i {
+      display: block; height: 100%; width: 40%; background: #ff695f;
+      animation: slide 1.1s ease-in-out infinite;
+    }
+    .font-sample { font-size: 34px; font-weight: 700; margin-bottom: 8px; }
+    .font-body { color: #9aa7b5; margin-bottom: 14px; }
+    .pill {
+      display: inline-block; padding: 6px 12px; border-radius: 999px;
+      background: #243041; margin-right: 8px; font-size: 13px;
+    }
+    .pill.on { background: #03a4ed; }
+    .tpl-thumb {
+      height: 120px; border-radius: 10px; margin-bottom: 12px;
+      background: linear-gradient(#203040, #15202c); padding: 10px;
+    }
+    .tpl-thumb .nav { height: 14px; border-radius: 4px; margin-bottom: 8px; }
+    .tpl-thumb .hero { height: 48px; border-radius: 4px; background: #2a3648; margin-bottom: 8px; }
+    .tpl-thumb .line { height: 8px; border-radius: 4px; background: #2a3648; margin-bottom: 6px; }
+    .login-box {
+      width: 280px; margin: 20px auto; background: #121820; border-radius: 16px;
+      padding: 24px; border: 1px solid #2c3644;
+    }
+    .avatar { width: 48px; height: 48px; border-radius: 50%; background: #03a4ed; margin: 0 auto 16px; }
+    .field { height: 36px; border-radius: 8px; background: #1a222d; border: 1px solid #2c3644; margin-bottom: 10px; }
+    .swatch {
+      width: 42px; height: 42px; border-radius: 10px; display: inline-block; margin-right: 10px;
+      border: 2px solid transparent; vertical-align: middle;
+    }
+    .swatch.on { border-color: #fff; transform: scale(1.08); }
+    .preview-site {
+      margin-top: 18px; border-radius: 12px; overflow: hidden; border: 1px solid #2c3644;
+      height: 220px; background: #0f1419;
+    }
+    .preview-site .pnav { height: 36px; background: #03a4ed; transition: background .4s; }
+    .preview-site .phero { height: 120px; background: #1a222d; display: flex; align-items: center; justify-content: center; }
+    .preview-site .pbtn {
+      width: 120px; height: 34px; border-radius: 8px; background: #ff695f; transition: background .4s;
+    }
+    .ai-prompt {
+      background: #121820; border: 1px solid #2c3644; border-radius: 12px; padding: 14px;
+      margin-bottom: 16px; min-height: 48px; color: #9aa7b5;
+    }
+    .ai-prompt .typed { color: #e8eaed; }
+    .ai-out {
+      background: #121820; border-radius: 12px; padding: 16px; border: 1px solid #2c3644;
+      min-height: 140px;
+    }
+    .ai-line { height: 12px; background: #2c3644; border-radius: 6px; margin-bottom: 10px; width: 0; }
+    .ai-img {
+      width: 160px; height: 100px; border-radius: 10px; margin-top: 12px;
+      background: linear-gradient(135deg, #03a4ed, #ff695f); opacity: 0; transform: scale(.9);
+    }
+    .block {
+      background: #121820; border-left: 4px solid #03a4ed; border-radius: 10px;
+      padding: 16px; margin-bottom: 12px; transition: transform .35s;
+    }
+    .block:nth-child(2) { border-left-color: #ff695f; }
+    .block:nth-child(3) { border-left-color: #2ecc71; }
+    .menu-item span {
+      display: inline-block; width: 180px; height: 10px; background: #3a4656; border-radius: 4px;
+    }
+    .handle { width: 18px; height: 18px; border-radius: 4px; background: #03a4ed; }
+    .sec-card { height: 150px; display: flex; align-items: end; padding: 14px; font-weight: 700; }
+    .pub-flow { display: flex; align-items: center; justify-content: center; gap: 28px; margin-top: 60px; }
+    .doc {
+      width: 140px; height: 180px; border-radius: 12px; background: #121820; border: 1px solid #2c3644;
+      display: flex; align-items: center; justify-content: center; font-weight: 700;
+    }
+    .arrow { width: 70px; height: 4px; background: #03a4ed; position: relative; }
+    .arrow::after {
+      content: ""; position: absolute; right: -2px; top: -6px;
+      border: 8px solid transparent; border-left-color: #03a4ed;
+    }
+    .live {
+      width: 120px; height: 120px; border-radius: 50%; background: rgba(3,164,237,.2);
+      border: 2px solid #03a4ed; display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 22px; color: #03a4ed; opacity: .4; transform: scale(.85);
+    }
+    .dash {
+      display: grid; grid-template-columns: 180px 1fr; gap: 16px; min-height: 420px;
+    }
+    .side { background: #121820; border-radius: 12px; padding: 12px; }
+    .side div {
+      padding: 12px; border-radius: 8px; margin-bottom: 8px; color: #9aa7b5; font-size: 14px;
+    }
+    .side div.on { background: #03a4ed; color: #fff; }
+    .main-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .main-cards .card { min-height: 110px; }
+    .io {
+      display: flex; align-items: center; justify-content: center; gap: 24px; margin-top: 80px;
+    }
+    .io-box {
+      width: 150px; height: 150px; border-radius: 18px; background: #121820; border: 1px solid #2c3644;
+      display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 22px;
+    }
+    .flow {
+      width: 120px; height: 6px; background: linear-gradient(90deg, transparent, #03a4ed, transparent);
+      background-size: 200% 100%;
+    }
+    .seo-box { background: #121820; border-radius: 12px; padding: 18px; border: 1px solid #2c3644; }
+    .seo-title { color: #4ea1ff; font-size: 22px; font-weight: 700; margin-bottom: 6px; min-height: 28px; }
+    .seo-url { color: #2ecc71; margin-bottom: 8px; min-height: 20px; }
+    .seo-desc { color: #9aa7b5; min-height: 40px; }
+    .contact-row .avatar-sm {
+      width: 34px; height: 34px; border-radius: 50%; background: #03a4ed; margin-right: 12px;
+    }
+    .contact-row { display: flex; align-items: center; }
+    .badge-new {
+      background: #ff695f; color: #fff; font-size: 11px; font-weight: 700;
+      padding: 3px 8px; border-radius: 999px; opacity: 0;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+    @keyframes slide { 0%{transform:translateX(-100%)} 100%{transform:translateX(280%)} }
+
+    /* Animation timelines driven by classes added via JS */
+    .click .cursor::after { animation: clickRipple .35s ease-out; }
+    @keyframes clickRipple {
+      0% { opacity: 1; transform: scale(.6); }
+      100% { opacity: 0; transform: scale(1.4); }
+    }
+  </style>
+</head>
+<body>
+  <!-- LOADERS -->
+  <section class="scene" id="loaders">
+    <div class="chrome"><i></i><i></i><i></i><b>Design → Loaders</b></div>
+    <div class="panel">
+      <h1>Multiple Loaders</h1>
+      <p class="sub">Select a loading animation for your website</p>
+      <div class="grid grid-3">
+        <div class="card" data-target="l1">
+          <div class="loader-preview"><div class="spin"></div></div>
+          <strong>Pulse Spinner</strong>
+        </div>
+        <div class="card" data-target="l2">
+          <div class="loader-preview"><div class="dots"><span></span><span></span><span></span></div></div>
+          <strong>Bounce Dots</strong>
+        </div>
+        <div class="card" data-target="l3">
+          <div class="loader-preview"><div class="bar"><i></i></div></div>
+          <strong>Progress Bar</strong>
+        </div>
+      </div>
+      <div style="margin-top:22px"><button class="btn" id="loaders-apply">Apply loader</button></div>
+      <div class="toast" id="loaders-toast">Loader applied site-wide</div>
+      <div class="cursor" id="loaders-cursor"></div>
+    </div>
+  </section>
+
+  <!-- FONTS -->
+  <section class="scene" id="fonts">
+    <div class="chrome"><i></i><i></i><i></i><b>Design → Fonts</b></div>
+    <div class="panel">
+      <h1>Font Library</h1>
+      <p class="sub">Choose heading and body fonts</p>
+      <div class="font-sample" id="font-sample">Build faster websites</div>
+      <div class="font-body" id="font-body">Preview how body copy looks with your selected typeface.</div>
+      <div style="margin-bottom:18px">
+        <span class="pill" data-font="Poppins">Poppins</span>
+        <span class="pill" data-font="Georgia">Georgia</span>
+        <span class="pill" data-font="Segoe UI">Segoe UI</span>
+      </div>
+      <button class="btn" id="fonts-apply">Save fonts</button>
+      <div class="toast" id="fonts-toast">Typography updated globally</div>
+      <div class="cursor" id="fonts-cursor"></div>
+    </div>
+  </section>
+
+  <!-- TEMPLATES -->
+  <section class="scene" id="templates">
+    <div class="chrome"><i></i><i></i><i></i><b>Templates → Website</b></div>
+    <div class="panel">
+      <h1>Website Templates</h1>
+      <p class="sub">Preview and apply a full-site look</p>
+      <div class="grid grid-3">
+        <div class="card" data-tpl="a">
+          <div class="tpl-thumb"><div class="nav" style="background:#03a4ed"></div><div class="hero"></div><div class="line"></div><div class="line" style="width:60%"></div></div>
+          <strong>Ocean</strong>
+        </div>
+        <div class="card" data-tpl="b">
+          <div class="tpl-thumb"><div class="nav" style="background:#ff695f"></div><div class="hero"></div><div class="line"></div><div class="line" style="width:60%"></div></div>
+          <strong>Coral</strong>
+        </div>
+        <div class="card" data-tpl="c">
+          <div class="tpl-thumb"><div class="nav" style="background:#2ecc71"></div><div class="hero"></div><div class="line"></div><div class="line" style="width:60%"></div></div>
+          <strong>Forest</strong>
+        </div>
+      </div>
+      <div style="margin-top:18px"><button class="btn coral" id="templates-apply">Apply template</button></div>
+      <div class="toast" id="templates-toast">Template applied — content preserved</div>
+      <div class="cursor" id="templates-cursor"></div>
+    </div>
+  </section>
+
+  <!-- LOGIN -->
+  <section class="scene" id="login">
+    <div class="chrome"><i></i><i></i><i></i><b>Templates → Login</b></div>
+    <div class="panel">
+      <h1>Login Templates</h1>
+      <p class="sub">Pick a branded sign-in layout</p>
+      <div class="grid grid-3" style="margin-bottom:10px">
+        <div class="card" data-login="1"><strong>Centered</strong></div>
+        <div class="card" data-login="2"><strong>Split panel</strong></div>
+        <div class="card" data-login="3"><strong>Minimal</strong></div>
+      </div>
+      <div class="login-box" id="login-preview">
+        <div class="avatar"></div>
+        <div class="field"></div>
+        <div class="field"></div>
+        <button class="btn" style="width:100%">Sign in</button>
+      </div>
+      <div class="toast" id="login-toast">Login template activated</div>
+      <div class="cursor" id="login-cursor"></div>
+    </div>
+  </section>
+
+  <!-- COLORS -->
+  <section class="scene" id="colors">
+    <div class="chrome"><i></i><i></i><i></i><b>Design → Colors</b></div>
+    <div class="panel">
+      <h1>Template Color Customization</h1>
+      <p class="sub">Tune primary and accent colors live</p>
+      <div>
+        <span class="swatch on" data-c="#03a4ed" style="background:#03a4ed"></span>
+        <span class="swatch" data-c="#ff695f" style="background:#ff695f"></span>
+        <span class="swatch" data-c="#2ecc71" style="background:#2ecc71"></span>
+        <span class="swatch" data-c="#9b59b6" style="background:#9b59b6"></span>
+      </div>
+      <div class="preview-site">
+        <div class="pnav" id="color-nav"></div>
+        <div class="phero"><div class="pbtn" id="color-btn"></div></div>
+      </div>
+      <div style="margin-top:16px"><button class="btn" id="colors-apply">Save palette</button></div>
+      <div class="toast" id="colors-toast">Brand colors updated</div>
+      <div class="cursor" id="colors-cursor"></div>
+    </div>
+  </section>
+
+  <!-- AI -->
+  <section class="scene" id="ai">
+    <div class="chrome"><i></i><i></i><i></i><b>Zelo → Generate</b></div>
+    <div class="panel">
+      <h1>Generative AI Content & Images</h1>
+      <p class="sub">Describe what you need — Zelo drafts copy and visuals</p>
+      <div class="ai-prompt"><span class="typed" id="ai-typed"></span><span id="ai-caret">|</span></div>
+      <button class="btn" id="ai-generate">Generate</button>
+      <div class="ai-out" style="margin-top:16px">
+        <div class="ai-line" id="ai-l1"></div>
+        <div class="ai-line" id="ai-l2"></div>
+        <div class="ai-line" id="ai-l3"></div>
+        <div class="ai-img" id="ai-img"></div>
+      </div>
+      <div class="toast" id="ai-toast">Content & image ready to insert</div>
+      <div class="cursor" id="ai-cursor"></div>
+    </div>
+  </section>
+
+  <!-- BUILDER -->
+  <section class="scene" id="builder">
+    <div class="chrome"><i></i><i></i><i></i><b>Pages → Visual builder</b></div>
+    <div class="panel">
+      <h1>Visual Page Builder</h1>
+      <p class="sub">Reorder sections without code</p>
+      <div id="builder-list">
+        <div class="block" data-b="1">Hero section</div>
+        <div class="block" data-b="2">Features grid</div>
+        <div class="block" data-b="3">Call to action</div>
+      </div>
+      <div class="toast" id="builder-toast">Section order saved</div>
+      <div class="cursor" id="builder-cursor"></div>
+    </div>
+  </section>
+
+  <!-- MENUS -->
+  <section class="scene" id="menus">
+    <div class="chrome"><i></i><i></i><i></i><b>Menus → Header</b></div>
+    <div class="panel">
+      <h1>Menu Management</h1>
+      <p class="sub">Drag to reorder navigation links</p>
+      <div id="menu-list">
+        <div class="row menu-item"><span></span><div class="handle"></div></div>
+        <div class="row menu-item" id="menu-move"><strong style="color:#e8eaed">Services</strong><div class="handle"></div></div>
+        <div class="row menu-item"><span></span><div class="handle"></div></div>
+        <div class="row menu-item"><span></span><div class="handle"></div></div>
+      </div>
+      <button class="btn" id="menus-save">Save menu</button>
+      <div class="toast" id="menus-toast">Navigation updated</div>
+      <div class="cursor" id="menus-cursor"></div>
+    </div>
+  </section>
+
+  <!-- SECTIONS -->
+  <section class="scene" id="sections">
+    <div class="chrome"><i></i><i></i><i></i><b>Sections → Library</b></div>
+    <div class="panel">
+      <h1>Reusable Sections</h1>
+      <p class="sub">Drop a proven block into your page</p>
+      <div class="grid grid-3">
+        <div class="card sec-card" data-sec="1" style="background:linear-gradient(160deg,#152028,#1a222d)">Hero</div>
+        <div class="card sec-card" data-sec="2" style="background:linear-gradient(160deg,#241820,#1a222d)">Features</div>
+        <div class="card sec-card" data-sec="3" style="background:linear-gradient(160deg,#15241c,#1a222d)">CTA</div>
+      </div>
+      <div style="margin-top:18px"><button class="btn" id="sections-add">Add to page</button></div>
+      <div class="toast" id="sections-toast">Section added to page</div>
+      <div class="cursor" id="sections-cursor"></div>
+    </div>
+  </section>
+
+  <!-- PUBLISH -->
+  <section class="scene" id="publish">
+    <div class="chrome"><i></i><i></i><i></i><b>Page → Publish</b></div>
+    <div class="panel">
+      <h1>Real-Time Publishing</h1>
+      <p class="sub">Preview, approve, and go live instantly</p>
+      <div class="pub-flow">
+        <div class="doc">Draft</div>
+        <div class="arrow"></div>
+        <div class="live" id="publish-live">LIVE</div>
+      </div>
+      <div style="text-align:center;margin-top:28px"><button class="btn coral" id="publish-btn">Publish now</button></div>
+      <div class="toast" id="publish-toast">Page is live</div>
+      <div class="cursor" id="publish-cursor"></div>
+    </div>
+  </section>
+
+  <!-- RBAC -->
+  <section class="scene" id="rbac">
+    <div class="chrome"><i></i><i></i><i></i><b>Users → Roles & permissions</b></div>
+    <div class="panel">
+      <h1>Role-Based Access</h1>
+      <p class="sub">Select which roles can edit and publish</p>
+      <div class="row"><strong>Admin</strong><div class="toggle on" id="role-admin"></div></div>
+      <div class="row" id="role-editor-row"><strong>Editor</strong><div class="toggle" id="role-editor"></div></div>
+      <div class="row"><strong>Viewer</strong><div class="toggle" id="role-viewer"></div></div>
+      <button class="btn" id="rbac-save" style="margin-top:8px">Save permissions</button>
+      <div class="toast" id="rbac-toast">Roles updated successfully</div>
+      <div class="cursor" id="rbac-cursor"></div>
+    </div>
+  </section>
+
+  <!-- DASHBOARD -->
+  <section class="scene" id="dashboard">
+    <div class="chrome"><i></i><i></i><i></i><b>Admin dashboard</b></div>
+    <div class="panel">
+      <h1>All-in-One Admin Dashboard</h1>
+      <p class="sub">Navigate pages, templates, contacts, and users</p>
+      <div class="dash">
+        <div class="side" id="dash-side">
+          <div class="on" data-nav="Pages">Pages</div>
+          <div data-nav="Menus">Menus</div>
+          <div data-nav="Templates">Templates</div>
+          <div data-nav="Contacts">Contacts</div>
+          <div data-nav="Users">Users</div>
+        </div>
+        <div class="main-cards" id="dash-main">
+          <div class="card"><strong id="dash-title">Pages</strong><p class="sub" style="margin:8px 0 0">Manage site structure</p></div>
+          <div class="card"><strong>Quick actions</strong><p class="sub" style="margin:8px 0 0">Create · Import · Preview</p></div>
+        </div>
+      </div>
+      <div class="cursor" id="dashboard-cursor"></div>
+    </div>
+  </section>
+
+  <!-- IMPORT EXPORT -->
+  <section class="scene" id="importexport">
+    <div class="chrome"><i></i><i></i><i></i><b>Tools → Import / Export</b></div>
+    <div class="panel">
+      <h1>Import & Export</h1>
+      <p class="sub">Move content for backup or migration</p>
+      <div class="io">
+        <div class="io-box" id="io-in">IN</div>
+        <div class="flow" id="io-flow"></div>
+        <div class="io-box" id="io-out">OUT</div>
+      </div>
+      <div style="text-align:center;margin-top:28px">
+        <button class="btn" id="io-export">Export content</button>
+        <button class="btn coral" id="io-import" style="margin-left:10px">Import content</button>
+      </div>
+      <div class="toast" id="importexport-toast">Transfer complete</div>
+      <div class="cursor" id="importexport-cursor"></div>
+    </div>
+  </section>
+
+  <!-- SEO -->
+  <section class="scene" id="seo">
+    <div class="chrome"><i></i><i></i><i></i><b>Page → SEO</b></div>
+    <div class="panel">
+      <h1>SEO-Ready Publishing</h1>
+      <p class="sub">Generate titles and descriptions with AI assist</p>
+      <button class="btn" id="seo-gen">Generate SEO copy</button>
+      <div class="seo-box" style="margin-top:18px">
+        <div class="seo-title" id="seo-title"></div>
+        <div class="seo-url" id="seo-url"></div>
+        <div class="seo-desc" id="seo-desc"></div>
+      </div>
+      <div class="toast" id="seo-toast">SEO fields filled — ready to publish</div>
+      <div class="cursor" id="seo-cursor"></div>
+    </div>
+  </section>
+
+  <!-- CONTACTS -->
+  <section class="scene" id="contacts">
+    <div class="chrome"><i></i><i></i><i></i><b>Contacts → Inbox</b></div>
+    <div class="panel">
+      <h1>Contact & Lead Capture</h1>
+      <p class="sub">Review inquiries in the admin inbox</p>
+      <div class="row contact-row" id="c1"><div class="avatar-sm"></div><div><strong>Demo request</strong><div class="sub" style="margin:0">From marketing@acme.com</div></div><span class="badge-new" id="c1-badge">NEW</span></div>
+      <div class="row contact-row" id="c2" style="opacity:.55"><div class="avatar-sm" style="background:#ff695f"></div><div><strong>Newsletter signup</strong><div class="sub" style="margin:0">From hello@brand.co</div></div></div>
+      <div class="row contact-row" id="c3" style="opacity:.55"><div class="avatar-sm" style="background:#2ecc71"></div><div><strong>Support question</strong><div class="sub" style="margin:0">From user@site.com</div></div></div>
+      <button class="btn" id="contacts-open">Open inquiry</button>
+      <div class="toast" id="contacts-toast">Lead opened for follow-up</div>
+      <div class="cursor" id="contacts-cursor"></div>
+    </div>
+  </section>
+
+  <script>
+    const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+
+    async function moveCursor(cursor, x, y, ms = 500) {
+      cursor.style.opacity = '1';
+      cursor.style.transition = `left ${ms}ms ease, top ${ms}ms ease`;
+      cursor.style.left = `${x}px`;
+      cursor.style.top = `${y}px`;
+      await wait(ms);
+    }
+
+    async function clickAt(cursor, el) {
+      const panel = cursor.parentElement;
+      const pr = panel.getBoundingClientRect();
+      const r = el.getBoundingClientRect();
+      const x = r.left - pr.left + r.width / 2 - 8;
+      const y = r.top - pr.top + r.height / 2 - 8;
+      await moveCursor(cursor, x, y, 450);
+      cursor.classList.add('click');
+      await wait(180);
+      cursor.classList.remove('click');
+    }
+
+    function showToast(el) {
+      el.style.transition = 'opacity .35s ease, transform .35s ease';
+      el.style.opacity = '1';
+      el.style.transform = 'translateY(0)';
+    }
+
+    function activate(sceneId) {
+      document.querySelectorAll('.scene').forEach((s) => s.classList.remove('active'));
+      document.getElementById(sceneId).classList.add('active');
+    }
+
+    const scripts = {
+      async loaders() {
+        activate('loaders');
+        const cursor = document.getElementById('loaders-cursor');
+        const cards = [...document.querySelectorAll('#loaders .card')];
+        await wait(400);
+        await clickAt(cursor, cards[0]);
+        cards[0].classList.add('selected');
+        await wait(500);
+        await clickAt(cursor, cards[1]);
+        cards[0].classList.remove('selected');
+        cards[1].classList.add('selected');
+        await wait(400);
+        await clickAt(cursor, document.getElementById('loaders-apply'));
+        showToast(document.getElementById('loaders-toast'));
+        await wait(1200);
+      },
+
+      async fonts() {
+        activate('fonts');
+        const cursor = document.getElementById('fonts-cursor');
+        const pills = [...document.querySelectorAll('#fonts .pill')];
+        const sample = document.getElementById('font-sample');
+        await wait(400);
+        await clickAt(cursor, pills[0]);
+        pills.forEach((p) => p.classList.remove('on'));
+        pills[0].classList.add('on');
+        sample.style.fontFamily = 'Poppins, Segoe UI, sans-serif';
+        await wait(450);
+        await clickAt(cursor, pills[1]);
+        pills.forEach((p) => p.classList.remove('on'));
+        pills[1].classList.add('on');
+        sample.style.fontFamily = 'Georgia, serif';
+        await wait(450);
+        await clickAt(cursor, document.getElementById('fonts-apply'));
+        showToast(document.getElementById('fonts-toast'));
+        await wait(1200);
+      },
+
+      async templates() {
+        activate('templates');
+        const cursor = document.getElementById('templates-cursor');
+        const cards = [...document.querySelectorAll('#templates .card')];
+        await wait(400);
+        await clickAt(cursor, cards[0]);
+        cards[0].classList.add('selected');
+        await wait(400);
+        await clickAt(cursor, cards[1]);
+        cards[0].classList.remove('selected');
+        cards[1].classList.add('selected');
+        await wait(400);
+        await clickAt(cursor, document.getElementById('templates-apply'));
+        showToast(document.getElementById('templates-toast'));
+        await wait(1200);
+      },
+
+      async login() {
+        activate('login');
+        const cursor = document.getElementById('login-cursor');
+        const cards = [...document.querySelectorAll('#login .card')];
+        const box = document.getElementById('login-preview');
+        await wait(400);
+        await clickAt(cursor, cards[0]);
+        cards[0].classList.add('selected');
+        await wait(400);
+        await clickAt(cursor, cards[1]);
+        cards.forEach((c) => c.classList.remove('selected'));
+        cards[1].classList.add('selected');
+        box.style.margin = '20px 0 20px auto';
+        box.style.borderColor = '#03a4ed';
+        await wait(500);
+        showToast(document.getElementById('login-toast'));
+        await wait(1200);
+      },
+
+      async colors() {
+        activate('colors');
+        const cursor = document.getElementById('colors-cursor');
+        const swatches = [...document.querySelectorAll('#colors .swatch')];
+        const nav = document.getElementById('color-nav');
+        const btn = document.getElementById('color-btn');
+        await wait(400);
+        for (const s of [swatches[1], swatches[2], swatches[0]]) {
+          await clickAt(cursor, s);
+          swatches.forEach((x) => x.classList.remove('on'));
+          s.classList.add('on');
+          nav.style.background = s.dataset.c;
+          btn.style.background = s.dataset.c === '#03a4ed' ? '#ff695f' : '#03a4ed';
+          await wait(350);
+        }
+        await clickAt(cursor, document.getElementById('colors-apply'));
+        showToast(document.getElementById('colors-toast'));
+        await wait(1200);
+      },
+
+      async ai() {
+        activate('ai');
+        const cursor = document.getElementById('ai-cursor');
+        const typed = document.getElementById('ai-typed');
+        const text = 'Write a hero headline and generate a matching image';
+        await wait(300);
+        for (let i = 0; i <= text.length; i++) {
+          typed.textContent = text.slice(0, i);
+          await wait(28);
+        }
+        await clickAt(cursor, document.getElementById('ai-generate'));
+        const widths = ['92%', '78%', '85%'];
+        for (let i = 0; i < 3; i++) {
+          const line = document.getElementById(`ai-l${i + 1}`);
+          line.style.transition = 'width .55s ease';
+          line.style.width = widths[i];
+          line.style.background = i === 0 ? '#4ea1ff' : '#3a4656';
+          await wait(400);
+        }
+        const img = document.getElementById('ai-img');
+        img.style.transition = 'opacity .45s ease, transform .45s ease';
+        img.style.opacity = '1';
+        img.style.transform = 'scale(1)';
+        await wait(500);
+        showToast(document.getElementById('ai-toast'));
+        await wait(1100);
+      },
+
+      async builder() {
+        activate('builder');
+        const cursor = document.getElementById('builder-cursor');
+        const list = document.getElementById('builder-list');
+        const blocks = [...list.children];
+        await wait(400);
+        await clickAt(cursor, blocks[2]);
+        list.insertBefore(blocks[2], blocks[0]);
+        await wait(600);
+        const now = [...list.children];
+        await clickAt(cursor, now[2]);
+        list.insertBefore(now[2], now[1]);
+        await wait(500);
+        showToast(document.getElementById('builder-toast'));
+        await wait(1200);
+      },
+
+      async menus() {
+        activate('menus');
+        const cursor = document.getElementById('menus-cursor');
+        const list = document.getElementById('menu-list');
+        const item = document.getElementById('menu-move');
+        await wait(400);
+        await clickAt(cursor, item);
+        list.appendChild(item);
+        item.style.borderColor = '#03a4ed';
+        await wait(600);
+        await clickAt(cursor, document.getElementById('menus-save'));
+        showToast(document.getElementById('menus-toast'));
+        await wait(1200);
+      },
+
+      async sections() {
+        activate('sections');
+        const cursor = document.getElementById('sections-cursor');
+        const cards = [...document.querySelectorAll('#sections .card')];
+        await wait(400);
+        await clickAt(cursor, cards[1]);
+        cards[1].classList.add('selected');
+        await wait(400);
+        await clickAt(cursor, document.getElementById('sections-add'));
+        showToast(document.getElementById('sections-toast'));
+        await wait(1200);
+      },
+
+      async publish() {
+        activate('publish');
+        const cursor = document.getElementById('publish-cursor');
+        const live = document.getElementById('publish-live');
+        await wait(500);
+        await clickAt(cursor, document.getElementById('publish-btn'));
+        live.style.transition = 'opacity .45s ease, transform .45s ease';
+        live.style.opacity = '1';
+        live.style.transform = 'scale(1)';
+        await wait(500);
+        showToast(document.getElementById('publish-toast'));
+        await wait(1200);
+      },
+
+      async rbac() {
+        activate('rbac');
+        const cursor = document.getElementById('rbac-cursor');
+        const editor = document.getElementById('role-editor');
+        const viewer = document.getElementById('role-viewer');
+        await wait(500);
+        await clickAt(cursor, editor);
+        editor.classList.add('on');
+        await wait(500);
+        await clickAt(cursor, viewer);
+        viewer.classList.add('on');
+        await wait(350);
+        await clickAt(cursor, viewer);
+        viewer.classList.remove('on');
+        await wait(350);
+        await clickAt(cursor, document.getElementById('rbac-save'));
+        showToast(document.getElementById('rbac-toast'));
+        await wait(1200);
+      },
+
+      async dashboard() {
+        activate('dashboard');
+        const cursor = document.getElementById('dashboard-cursor');
+        const items = [...document.querySelectorAll('#dash-side div')];
+        const title = document.getElementById('dash-title');
+        await wait(400);
+        for (const item of items.slice(1)) {
+          await clickAt(cursor, item);
+          items.forEach((i) => i.classList.remove('on'));
+          item.classList.add('on');
+          title.textContent = item.dataset.nav;
+          await wait(350);
+        }
+        await wait(800);
+      },
+
+      async importexport() {
+        activate('importexport');
+        const cursor = document.getElementById('importexport-cursor');
+        const flow = document.getElementById('io-flow');
+        await wait(400);
+        await clickAt(cursor, document.getElementById('io-export'));
+        flow.style.animation = 'none';
+        flow.style.backgroundPosition = '0 0';
+        flow.style.transition = 'background-position 1s linear';
+        flow.style.backgroundImage = 'linear-gradient(90deg, transparent, #03a4ed, transparent)';
+        flow.style.backgroundSize = '200% 100%';
+        flow.style.backgroundPosition = '100% 0';
+        document.getElementById('io-out').style.borderColor = '#03a4ed';
+        await wait(700);
+        await clickAt(cursor, document.getElementById('io-import'));
+        document.getElementById('io-in').style.borderColor = '#ff695f';
+        showToast(document.getElementById('importexport-toast'));
+        await wait(1200);
+      },
+
+      async seo() {
+        activate('seo');
+        const cursor = document.getElementById('seo-cursor');
+        await wait(400);
+        await clickAt(cursor, document.getElementById('seo-gen'));
+        const title = 'AI-native CMS for fast publishing teams';
+        const url = 'proxwebs.com/features';
+        const desc = 'Build, brand, and publish with loaders, templates, colors, and generative AI.';
+        const tEl = document.getElementById('seo-title');
+        const uEl = document.getElementById('seo-url');
+        const dEl = document.getElementById('seo-desc');
+        for (let i = 0; i <= title.length; i++) { tEl.textContent = title.slice(0, i); await wait(18); }
+        for (let i = 0; i <= url.length; i++) { uEl.textContent = url.slice(0, i); await wait(12); }
+        for (let i = 0; i <= desc.length; i++) { dEl.textContent = desc.slice(0, i); await wait(10); }
+        showToast(document.getElementById('seo-toast'));
+        await wait(1100);
+      },
+
+      async contacts() {
+        activate('contacts');
+        const cursor = document.getElementById('contacts-cursor');
+        const badge = document.getElementById('c1-badge');
+        badge.style.transition = 'opacity .3s ease';
+        badge.style.opacity = '1';
+        await wait(500);
+        await clickAt(cursor, document.getElementById('c1'));
+        document.getElementById('c1').style.borderColor = '#03a4ed';
+        await wait(350);
+        await clickAt(cursor, document.getElementById('contacts-open'));
+        showToast(document.getElementById('contacts-toast'));
+        await wait(1200);
+      },
+    };
+
+    window.runFeatureDemo = async (id) => {
+      if (!scripts[id]) throw new Error('Unknown demo: ' + id);
+      // reset soft state by reload is handled outside; just run
+      await scripts[id]();
+    };
+
+    window.listFeatureDemos = () => Object.keys(scripts);
+
+    // Preview helper: ?scene=rbac
+    const params = new URLSearchParams(location.search);
+    const scene = params.get('scene');
+    if (scene && scripts[scene]) {
+      scripts[scene]();
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\TeamMember;
+use Illuminate\Database\Seeder;
+
+class TeamMemberSeeder extends Seeder
+{
+    public function run(): void
+    {
+        $members = [
+            [
+                'slug' => 'sanoof',
+                'name' => 'Dr. Sanoof Khan S N',
+                'role' => 'Founder, Chairman & CEO',
+                'image' => 'sanoof-khan.png',
+                'short_bio' => 'Sets the company vision and leads strategy across product, growth, and long-term direction.',
+                'bio' => 'As Founder, Chairman & CEO, Dr. Sanoof Khan S N leads the company with a clear focus on building technology that helps teams publish faster and with more confidence. He shapes overall strategy, partnerships, and organizational priorities — ensuring product innovation stays grounded in real customer needs and sustainable growth.',
+                'focus' => ['Company vision', 'Strategic leadership', 'Growth & partnerships'],
+                'sort_order' => 1,
+            ],
+            [
+                'slug' => 'shahina',
+                'name' => 'Ms. Shahina Sanoof',
+                'role' => 'Managing Director',
+                'image' => 'shahina-sanoof.png',
+                'short_bio' => 'Guides company direction and ensures strategy turns into strong organizational results.',
+                'bio' => 'As Managing Director, Ms. Shahina Sanoof leads the organization with a focus on strategic direction, governance, and sustainable growth. She works closely with leadership to align teams, strengthen operations, and keep the company moving toward clear long-term goals. Her leadership brings balance between vision, people, and performance.',
+                'focus' => ['Strategic direction', 'Organizational leadership', 'Governance & growth'],
+                'sort_order' => 2,
+            ],
+            [
+                'slug' => 'vibin',
+                'name' => 'Mr. Vibin Vargis Kurakar',
+                'role' => 'Chief Operating Officer',
+                'image' => 'vibin-vargis-kurakar.png',
+                'short_bio' => 'Leads day-to-day operations and keeps product delivery, customer success, and growth aligned.',
+                'bio' => 'As Chief Operating Officer, Mr. Vibin Vargis Kurakar oversees operations across the organization — aligning teams, processes, and delivery so customers get a reliable, high-quality publishing experience. He focuses on execution excellence, cross-functional coordination, and scaling the company with clarity and accountability.',
+                'focus' => ['Operations', 'Delivery excellence', 'Cross-functional leadership'],
+                'sort_order' => 3,
+            ],
+            [
+                'slug' => 'akhila',
+                'name' => 'Ms. Akhila S',
+                'role' => 'General Manager',
+                'image' => 'akhila-s.png',
+                'short_bio' => 'Drives organizational performance and keeps teams aligned around clear business goals.',
+                'bio' => 'As General Manager, Ms. Akhila S oversees business operations and team coordination to keep the organization running smoothly. She focuses on execution, communication, and accountability — ensuring priorities stay clear and departments work together toward shared outcomes. Her leadership helps turn strategy into consistent day-to-day results.',
+                'focus' => ['Business operations', 'Team coordination', 'Performance management'],
+                'sort_order' => 4,
+            ],
+            [
+                'slug' => 'shiras',
+                'name' => 'Shiras Sharaf',
+                'role' => 'Software Developer & Team Lead',
+                'image' => 'shiras-sharaf.png',
+                'short_bio' => 'Leads the engineering team and guides delivery of reliable, high-quality product features.',
+                'bio' => 'Shiras Sharaf is a Software Developer and Team Lead who guides the engineering team through planning, development, and delivery. He balances hands-on coding with clear technical direction — helping the team ship dependable features, maintain code quality, and move fast without losing focus. His leadership keeps collaboration smooth and product goals firmly on track.',
+                'focus' => ['Team leadership', 'Full-stack development', 'Delivery & quality'],
+                'sort_order' => 5,
+            ],
+            [
+                'slug' => 'adithya',
+                'name' => 'Adithya Babu',
+                'role' => 'Software Developer',
+                'image' => 'adithya-babu.png',
+                'short_bio' => 'The engineer behind this CMS — turning product vision into a fast, AI-ready publishing platform.',
+                'bio' => 'Adithya Babu is the software developer who built this CMS from the ground up. She designed and engineered the core experience teams rely on every day: the visual editor, reusable sections, templates, real-time publishing, and the AI workflows that make content creation feel effortless. With a sharp eye for both clean architecture and thoughtful UX, she turns complex publishing problems into simple, elegant tools — so marketers can ship beautiful websites without waiting on developers.',
+                'focus' => ['Full-stack development', 'CMS architecture', 'AI-assisted publishing'],
+                'sort_order' => 6,
+            ],
+            [
+                'slug' => 'athira',
+                'name' => 'Athira N',
+                'role' => 'Lead - HR & ER',
+                'image' => 'athira-n.png',
+                'short_bio' => 'Builds a people-first culture and strengthens employee relations across the organization.',
+                'bio' => 'Athira N leads Human Resources and Employee Relations with a focus on talent, culture, and workplace well-being. She connects organizational goals with people practices — supporting hiring, engagement, and a healthy work environment where teams can grow and perform at their best. Her approachable leadership helps keep the company aligned, supported, and ready to scale.',
+                'focus' => ['Human resources', 'Employee relations', 'Culture & engagement'],
+                'sort_order' => 7,
+            ],
+            [
+                'slug' => 'noora',
+                'name' => 'Noora Fathima',
+                'role' => 'Software Tester',
+                'image' => 'noora-fathima.png',
+                'short_bio' => 'Ensures every release is reliable by catching issues early and protecting product quality.',
+                'bio' => 'Noora Fathima is a Software Tester focused on keeping the CMS stable, polished, and ready for real users. She carefully validates features across workflows — from editing and publishing to AI-assisted content — so bugs are caught early and quality stays high. Her attention to detail helps the team ship with confidence.',
+                'focus' => ['Quality assurance', 'Functional testing', 'Release readiness'],
+                'sort_order' => 8,
+            ],
+            [
+                'slug' => 'anaswara',
+                'name' => 'Anaswara B M',
+                'role' => 'Software Tester',
+                'image' => 'anaswara-bm.png',
+                'short_bio' => 'Validates features end to end so every release feels smooth, stable, and user-ready.',
+                'bio' => 'Anaswara B M is a Software Tester who carefully checks product flows to make sure features work as expected before they go live. She focuses on usability, consistency, and catching edge cases early — helping the team deliver a CMS experience that feels dependable for every user.',
+                'focus' => ['Manual testing', 'User flow validation', 'Bug reporting'],
+                'sort_order' => 9,
+            ],
+            [
+                'slug' => 'devika',
+                'name' => 'Devika A',
+                'role' => 'Graphics Designer',
+                'image' => 'devika-a.png',
+                'short_bio' => 'Shapes visual identity and design assets that keep the product looking polished and on-brand.',
+                'bio' => 'Devika A is a Graphics Designer who brings clarity and creativity to the brand. She crafts visual assets, layouts, and design details that make the product feel cohesive and professional — from marketing creatives to interface-ready graphics. Her work helps the team present ideas with style and consistency.',
+                'focus' => ['Brand visuals', 'Creative design', 'UI graphics'],
+                'sort_order' => 10,
+            ],
+        ];
+
+        foreach ($members as $member) {
+            TeamMember::query()->updateOrCreate(
+                ['slug' => $member['slug']],
+                [
+                    ...$member,
+                    'is_active' => true,
+                ]
+            );
+        }
+    }
+}

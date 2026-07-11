@@ -1,0 +1,62 @@
+{
+  "loaders": {
+    "video": "/onix/assets/videos/features/loaders.mp4",
+    "poster": "/onix/assets/videos/features/posters/loaders.png"
+  },
+  "fonts": {
+    "video": "/onix/assets/videos/features/fonts.mp4",
+    "poster": "/onix/assets/videos/features/posters/fonts.png"
+  },
+  "templates": {
+    "video": "/onix/assets/videos/features/templates.mp4",
+    "poster": "/onix/assets/videos/features/posters/templates.png"
+  },
+  "login": {
+    "video": "/onix/assets/videos/features/login.mp4",
+    "poster": "/onix/assets/videos/features/posters/login.png"
+  },
+  "colors": {
+    "video": "/onix/assets/videos/features/colors.mp4",
+    "poster": "/onix/assets/videos/features/posters/colors.png"
+  },
+  "ai": {
+    "video": "/onix/assets/videos/features/ai.mp4",
+    "poster": "/onix/assets/videos/features/posters/ai.png"
+  },
+  "builder": {
+    "video": "/onix/assets/videos/features/builder.mp4",
+    "poster": "/onix/assets/videos/features/posters/builder.png"
+  },
+  "menus": {
+    "video": "/onix/assets/videos/features/menus.mp4",
+    "poster": "/onix/assets/videos/features/posters/menus.png"
+  },
+  "sections": {
+    "video": "/onix/assets/videos/features/sections.mp4",
+    "poster": "/onix/assets/videos/features/posters/sections.png"
+  },
+  "publish": {
+    "video": "/onix/assets/videos/features/publish.mp4",
+    "poster": "/onix/assets/videos/features/posters/publish.png"
+  },
+  "rbac": {
+    "video": "/onix/assets/videos/features/rbac.mp4",
+    "poster": "/onix/assets/videos/features/posters/rbac.png"
+  },
+  "dashboard": {
+    "video": "/onix/assets/videos/features/dashboard.mp4",
+    "poster": "/onix/assets/videos/features/posters/dashboard.png"
+  },
+  "importexport": {
+    "video": "/onix/assets/videos/features/importexport.mp4",
+    "poster": "/onix/assets/videos/features/posters/importexport.png"
+  },
+  "seo": {
+    "video": "/onix/assets/videos/features/seo.mp4",
+    "poster": "/onix/assets/videos/features/posters/seo.png"
+  },
+  "contacts": {
+    "video": "/onix/assets/videos/features/contacts.mp4",
+    "poster": "/onix/assets/videos/features/posters/contacts.png"
+  }
+}
