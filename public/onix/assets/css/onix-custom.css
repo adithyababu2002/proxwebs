@@ -300,12 +300,24 @@
 }
 
 .contact-us .info span {
+  display: inline-flex !important;
   align-items: center;
 }
 
 .contact-us .info span i {
-  float: none;
+  float: none !important;
   flex-shrink: 0;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  line-height: 1 !important;
+}
+
+.contact-us .info span a {
+  display: inline-flex;
+  align-items: center;
+  align-self: center;
+  line-height: 1.3;
 }
 
 .contact-us form#contact {

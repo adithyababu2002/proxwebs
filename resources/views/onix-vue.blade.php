@@ -24,7 +24,7 @@
         <link rel="stylesheet" href="/onix/assets/css/templatemo-onix-digital.css" />
         <link rel="stylesheet" href="/onix/assets/css/animated.css" />
         <link rel="stylesheet" href="/onix/assets/css/owl.css" />
-        <link rel="stylesheet" href="/onix/assets/css/onix-custom.css" />
+        <link rel="stylesheet" href="/onix/assets/css/onix-custom.css?v={{ @filemtime(public_path('onix/assets/css/onix-custom.css')) ?: time() }}" />
 
         @vite(['resources/js/onix/main.js'])
         <script>
