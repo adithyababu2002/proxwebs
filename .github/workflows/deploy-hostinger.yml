@@ -29,14 +29,28 @@ jobs:
           npm ci
           npm run build
 
+      - name: Verify SSH secret is set
+        env:
+          SSH_PASSWORD: ${{ secrets.HOSTINGER_SSH_PASSWORD }}
+        run: |
+          if [ -z "$SSH_PASSWORD" ]; then
+            echo "::error::HOSTINGER_SSH_PASSWORD secret is empty. Add it at Settings → Secrets and variables → Actions"
+            exit 1
+          fi
+          echo "HOSTINGER_SSH_PASSWORD is set (length ${#SSH_PASSWORD})"
+
       - name: Pull code + migrate on Hostinger (no seed)
         uses: appleboy/ssh-action@v1.2.0
         with:
-          host: ${{ secrets.HOSTINGER_HOST }}
-          username: ${{ secrets.HOSTINGER_USER }}
+          host: "157.173.216.239"
+          username: "u913661220"
           password: ${{ secrets.HOSTINGER_SSH_PASSWORD }}
-          port: ${{ secrets.HOSTINGER_PORT }}
+          port: 65002
+          protocol: tcp
+          timeout: 60s
+          command_timeout: 20m
           script_stop: true
+          debug: true
           script: |
             set -euo pipefail
             APP_DIR="$HOME/domains/proxwebs.com/laravel"
@@ -48,6 +62,7 @@ jobs:
             fi
 
             echo "==> Fetching main"
+            git remote set-url origin https://github.com/adithyababu2002/proxwebs.git
             git fetch origin main
             echo "==> Updating tracked files only (.env + storage uploads stay)"
             git reset --hard origin/main
@@ -72,10 +87,11 @@ jobs:
       - name: Upload Vite build (does not touch storage uploads)
         uses: appleboy/scp-action@v0.1.7
         with:
-          host: ${{ secrets.HOSTINGER_HOST }}
-          username: ${{ secrets.HOSTINGER_USER }}
+          host: "157.173.216.239"
+          username: "u913661220"
           password: ${{ secrets.HOSTINGER_SSH_PASSWORD }}
-          port: ${{ secrets.HOSTINGER_PORT }}
+          port: 65002
+          timeout: 60s
           source: "public/build"
           target: "/home/u913661220/domains/proxwebs.com/laravel"
           overwrite: true
@@ -83,10 +99,12 @@ jobs:
       - name: Final cache refresh
         uses: appleboy/ssh-action@v1.2.0
         with:
-          host: ${{ secrets.HOSTINGER_HOST }}
-          username: ${{ secrets.HOSTINGER_USER }}
+          host: "157.173.216.239"
+          username: "u913661220"
           password: ${{ secrets.HOSTINGER_SSH_PASSWORD }}
-          port: ${{ secrets.HOSTINGER_PORT }}
+          port: 65002
+          protocol: tcp
+          timeout: 60s
           script_stop: true
           script: |
             cd ~/domains/proxwebs.com/laravel
