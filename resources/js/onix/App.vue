@@ -36,13 +36,16 @@
                 <RouterLink to="/features" class="nav-link" active-class="active">Features</RouterLink>
               </li>
               <li class="scroll-to-section">
+                <RouterLink to="/designs" class="nav-link" active-class="active">Designs</RouterLink>
+              </li>
+              <li class="scroll-to-section">
+                <RouterLink to="/leaders" class="nav-link" active-class="active">Leaders</RouterLink>
+              </li>
+              <li class="scroll-to-section">
                 <RouterLink to="/team" class="nav-link" active-class="active">Team</RouterLink>
               </li>
               <li class="scroll-to-section">
                 <RouterLink to="/zelo" class="nav-link" active-class="active">Meet Zelo</RouterLink>
-              </li>
-              <li class="scroll-to-section">
-                <RouterLink to="/contact" class="nav-link" active-class="active">Contact</RouterLink>
               </li>
               <li class="scroll-to-section">
                 <div class="main-red-button-hover">
@@ -103,6 +106,7 @@
               <li>
                 <i class="fa fa-map-marker" aria-hidden="true"></i>
                 <span>
+                  A project of<br />
                   HYZ VENTURES INTL PRIVATE LIMITED,<br />
                   Technopark Trivandrum, Padmanabham Building, Technopark Campus, Thiruvananthapuram, Kerala 695581
                 </span>
@@ -119,7 +123,7 @@
             <ul class="footer-social">
               <li>
                 <a
-                  href="https://www.facebook.com/hyzventuresintlpvtltd/"
+                  href="https://www.facebook.com/share/19BWbNGuzC/"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Facebook"
@@ -129,7 +133,7 @@
               </li>
               <li>
                 <a
-                  href="https://www.instagram.com/hyzventuresintlpvtltd_/"
+                  href="https://www.instagram.com/prox.erp?igsh=bHcxaDA5a3AyYTJu"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Instagram"
@@ -139,7 +143,7 @@
               </li>
               <li>
                 <a
-                  href="https://www.linkedin.com/company/hyzventuresltd/"
+                  href="https://www.linkedin.com/company/proxerp-com/"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="LinkedIn"
@@ -156,7 +160,7 @@
             <ul>
               <li><RouterLink to="/features/generative-ai">AI Content Generation</RouterLink></li>
               <li><RouterLink to="/features/visual-page-builder">Visual Page Builder</RouterLink></li>
-              <li><RouterLink to="/features/website-templates">Design Templates</RouterLink></li>
+              <li><RouterLink to="/designs">Design Templates</RouterLink></li>
               <li><RouterLink to="/features">All Features</RouterLink></li>
             </ul>
           </div>
@@ -167,9 +171,9 @@
             <ul>
               <li><RouterLink to="/about">About Us</RouterLink></li>
               <li><RouterLink to="/features">Features</RouterLink></li>
+              <li><RouterLink to="/leaders">Our Leaders</RouterLink></li>
               <li><RouterLink to="/team">Our Team</RouterLink></li>
               <li><RouterLink to="/zelo">Meet Zelo</RouterLink></li>
-              <li><RouterLink to="/contact">Contact</RouterLink></li>
             </ul>
           </div>
         </div>

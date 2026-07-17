@@ -234,6 +234,58 @@
   }
 }
 
+/* ===== Banner hero typography — scale down on smaller screens ===== */
+@media (max-width: 991px) {
+  .main-banner {
+    padding: 180px 0 90px;
+  }
+
+  .main-banner .item h6 {
+    font-size: 15px;
+  }
+
+  .main-banner .item h2 {
+    font-size: 36px;
+    line-height: 1.25;
+  }
+}
+
+@media (max-width: 767px) {
+  .main-banner {
+    padding: 150px 0 70px;
+  }
+
+  .main-banner .item {
+    margin-right: 0;
+  }
+
+  .main-banner .item h6 {
+    font-size: 13px;
+    margin-bottom: 12px;
+  }
+
+  .main-banner .item h2 {
+    font-size: 28px;
+    line-height: 1.3;
+  }
+
+  .main-banner .item p {
+    font-size: 15px;
+    margin: 16px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-banner .item h2 {
+    font-size: 24px;
+    line-height: 1.28;
+  }
+
+  .main-banner .item h6 {
+    font-size: 12px;
+  }
+}
+
 /* ===== Equal-height service cards ===== */
 .our-services .owl-carousel .item {
   display: flex;
@@ -534,7 +586,9 @@ html[data-theme="dark"] body {
 html[data-theme="dark"] p,
 html[data-theme="dark"] .what-it-is-subtitle,
 html[data-theme="dark"] .team-subtitle,
+html[data-theme="dark"] .leaders-subtitle,
 html[data-theme="dark"] .team-card p,
+html[data-theme="dark"] .leader-card p,
 html[data-theme="dark"] .page-banner-content p,
 html[data-theme="dark"] .section-heading p,
 html[data-theme="dark"] .info-card p,
@@ -556,6 +610,7 @@ html[data-theme="dark"] .section-heading h2,
 html[data-theme="dark"] .main-banner .item h2,
 html[data-theme="dark"] .page-banner-content h2,
 html[data-theme="dark"] .team-card h4,
+html[data-theme="dark"] .leader-card h4,
 html[data-theme="dark"] .belief-item h4,
 html[data-theme="dark"] .cs-box ul li,
 html[data-theme="dark"] .page-cta h2,
@@ -603,6 +658,7 @@ html[data-theme="dark"] .header-area .main-nav .menu-trigger span:after {
 
 html[data-theme="dark"] .our-services .item,
 html[data-theme="dark"] .team-card,
+html[data-theme="dark"] .leader-card,
 html[data-theme="dark"] .cs-box,
 html[data-theme="dark"] .admin-card,
 html[data-theme="dark"] .info-card,
@@ -610,6 +666,8 @@ html[data-theme="dark"] .zelo-card,
 html[data-theme="dark"] .capability-card,
 html[data-theme="dark"] .highlight-card,
 html[data-theme="dark"] .team-profile,
+html[data-theme="dark"] .leader-profile,
+html[data-theme="dark"] .related-leader-card,
 html[data-theme="dark"] .work-card,
 html[data-theme="dark"] .service-block,
 html[data-theme="dark"] .feature-card,
@@ -617,7 +675,8 @@ html[data-theme="dark"] .detail-highlight,
 html[data-theme="dark"] .detail-steps,
 html[data-theme="dark"] .related-card,
 html[data-theme="dark"] .pricing-item-regular,
-html[data-theme="dark"] .pricing-item-pro {
+html[data-theme="dark"] .pricing-item-pro,
+html[data-theme="dark"] .design-card {
   background-color: #1a222d;
   background: #1a222d;
   box-shadow: 0 0 18px rgba(0, 0, 0, 0.35);
@@ -631,6 +690,8 @@ html[data-theme="dark"] .zelo-card h3,
 html[data-theme="dark"] .capability-card h4,
 html[data-theme="dark"] .highlight-card h4,
 html[data-theme="dark"] .team-profile-body h3,
+html[data-theme="dark"] .leader-profile-body h3,
+html[data-theme="dark"] .related-leader-card h4,
 html[data-theme="dark"] .work-card h4,
 html[data-theme="dark"] .service-block h3,
 html[data-theme="dark"] .service-block ul li,
@@ -638,13 +699,15 @@ html[data-theme="dark"] .workflow-list strong,
 html[data-theme="dark"] .workflow-panel ul li,
 html[data-theme="dark"] .overview-panel ul li,
 html[data-theme="dark"] .team-focus li,
+html[data-theme="dark"] .leader-focus li,
 html[data-theme="dark"] .feature-card h3,
 html[data-theme="dark"] .detail-highlight h3,
 html[data-theme="dark"] .detail-steps h3,
 html[data-theme="dark"] .detail-steps strong,
 html[data-theme="dark"] .related-card h4,
 html[data-theme="dark"] .feature-pillars li,
-html[data-theme="dark"] .about-us .fact-item .count-digit {
+html[data-theme="dark"] .about-us .fact-item .count-digit,
+html[data-theme="dark"] .design-card-name {
   color: #f1f3f5;
 }
 
@@ -658,6 +721,11 @@ html[data-theme="dark"] .zelo-card-image {
 }
 
 html[data-theme="dark"] .team-focus li {
+  background: #15241c;
+  border-color: #1e3d30;
+}
+
+html[data-theme="dark"] .leader-focus li {
   background: #15241c;
   border-color: #1e3d30;
 }
@@ -799,7 +867,8 @@ html[data-theme="dark"] .theme-toggle:hover {
 
 html[data-theme="dark"] .feature-card,
 html[data-theme="dark"] .related-card,
-html[data-theme="dark"] .detail-highlight {
+html[data-theme="dark"] .detail-highlight,
+html[data-theme="dark"] .design-card {
   border-color: #2c3644;
 }
 
@@ -808,7 +877,9 @@ html[data-theme="dark"] .feature-points li,
 html[data-theme="dark"] .detail-highlight p,
 html[data-theme="dark"] .detail-steps span,
 html[data-theme="dark"] .detail-points li,
-html[data-theme="dark"] .related-card p {
+html[data-theme="dark"] .related-card p,
+html[data-theme="dark"] .design-card-body p,
+html[data-theme="dark"] .designs-pill-hint {
   color: #b8c0c8;
 }
 
@@ -826,9 +897,41 @@ html[data-theme="dark"] .feature-pillars li {
 }
 
 html[data-theme="dark"] .feature-readmore,
+html[data-theme="dark"] .leader-readmore,
 html[data-theme="dark"] .related-card span,
-html[data-theme="dark"] .back-link {
+html[data-theme="dark"] .back-link,
+html[data-theme="dark"] .design-card-link {
   color: #4db8ef;
+}
+
+html[data-theme="dark"] .design-name-pill {
+  background: #1a222d;
+  border-color: #2c3644;
+  color: #e8eaed;
+}
+
+html[data-theme="dark"] .design-preview-panel,
+html[data-theme="dark"] .design-preview-footer {
+  background: #1a222d;
+}
+
+html[data-theme="dark"] .design-preview-header,
+html[data-theme="dark"] .design-preview-footer {
+  border-color: #2c3644;
+}
+
+html[data-theme="dark"] .design-preview-titles h3 {
+  color: #f1f3f5;
+}
+
+html[data-theme="dark"] .design-preview-footer p {
+  color: #b8c0c8;
+}
+
+html[data-theme="dark"] .design-nav-btn {
+  background: #151b23;
+  border-color: #2c3644;
+  color: #e8eaed;
 }
 
 /* Mobile nav dropdown — light + dark */

@@ -2,13 +2,17 @@
   <div class="inner-page zelo-page">
     <div class="page-banner">
       <div class="container">
-        <div class="row">
-          <div class="col-lg-10 offset-lg-1">
-            <div class="page-banner-content">
-              <h6>{{ zeloIntro.eyebrow }}</h6>
-              <h2>{{ zeloIntro.pageTitle }}</h2>
-              <p>{{ zeloIntro.pageLead }}</p>
-            </div>
+        <div class="page-banner-inner">
+          <img
+            class="zelo-banner-icon"
+            :src="img('zelo-avatar-transparent.png')"
+            alt=""
+            aria-hidden="true"
+          />
+          <div class="page-banner-content">
+            <h6>{{ zeloIntro.eyebrow }}</h6>
+            <h2>{{ zeloIntro.pageTitle }}</h2>
+            <p>{{ zeloIntro.pageLead }}</p>
           </div>
         </div>
       </div>
@@ -77,6 +81,28 @@ onMounted(() => {
 .page-banner {
   padding: 130px 0 50px;
   background: linear-gradient(135deg, #f4fbff 0%, #fff6f7 55%, #ffffff 100%);
+}
+
+.page-banner-inner {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.zelo-banner-icon {
+  flex-shrink: 0;
+  width: clamp(120px, 18vw, 200px);
+  height: auto;
+  opacity: 1;
+  pointer-events: none;
+  user-select: none;
+}
+
+.page-banner-content {
+  flex: 1;
+  min-width: 0;
 }
 
 .page-banner-content h6 {
@@ -190,8 +216,30 @@ onMounted(() => {
     padding: 50px 0;
   }
 
+  .page-banner-inner {
+    gap: 18px;
+  }
+
+  .zelo-banner-icon {
+    width: 110px;
+    opacity: 1;
+  }
+
   .page-banner-content h2 {
     font-size: 32px;
+  }
+}
+
+@media (max-width: 575px) {
+  .page-banner-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .zelo-banner-icon {
+    width: 88px;
+    opacity: 1;
   }
 }
 </style>

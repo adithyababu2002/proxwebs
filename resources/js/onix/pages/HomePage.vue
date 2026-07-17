@@ -198,6 +198,44 @@
     </div>
   </div>
 
+  <div id="leaders" class="our-leaders section">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-6 offset-lg-3">
+          <div class="section-heading text-center">
+            <h2 v-html="leadersIntro.homeTitle"></h2>
+            <span>{{ leadersIntro.eyebrow }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-8 offset-lg-2">
+          <p class="text-center leaders-subtitle">{{ leadersIntro.homeSubtitle }}</p>
+        </div>
+      </div>
+      <div class="row leaders-grid">
+        <div class="col-lg-4 col-md-6" v-for="member in leaderMembers" :key="member.id">
+          <div class="leader-card">
+            <div class="leader-card-photo">
+              <img :src="teamImage(member)" :alt="member.name" />
+            </div>
+            <h4>{{ member.name }}</h4>
+            <span>{{ member.role }}</span>
+            <p>{{ member.shortBio }}</p>
+            <RouterLink class="leader-readmore" :to="`/leaders/${member.slug}`">Read more</RouterLink>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-12 text-center">
+          <div class="main-blue-button-hover leaders-more-btn">
+            <RouterLink to="/leaders">Meet Our Leaders</RouterLink>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div id="team" class="our-team section">
     <div class="container">
       <div class="row">
@@ -290,18 +328,23 @@
                   Assemble pages from reusable blocks, then restyle in one click.
                 </p>
                 <div class="template-pills" role="group" aria-label="Templates">
-                  <button type="button" class="pill">Default</button>
-                  <button type="button" class="pill">Template A</button>
-                  <button type="button" class="pill">Template B</button>
-                  <button type="button" class="pill">Template C</button>
-                  <button type="button" class="pill">Template D</button>
-                  <button type="button" class="pill">Template E</button>
-                  <button type="button" class="pill">Template F</button>
-                  <button type="button" class="pill">Template G</button>
+                  <RouterLink
+                    v-for="design in designs"
+                    :key="design.id"
+                    class="pill"
+                    :to="{ name: 'designs', query: { preview: design.id } }"
+                  >
+                    {{ design.name }}
+                  </RouterLink>
+                  <span class="template-and-so-on">…and so on</span>
+                </div>
+                <div class="template-custom-cta">
+                  <span>For your custom designs</span>
+                  <RouterLink to="/contact" class="template-contact-btn">Contact Us</RouterLink>
                 </div>
                 <p class="subscribe-footnote">
                   Each template includes its own navbar &amp; footer styling.
-                  <RouterLink to="/contact">Live preview</RouterLink> lets you see a template before applying it.
+                  <RouterLink to="/designs">Live preview</RouterLink> lets you see a template before applying it.
                 </p>
               </div>
             </div>
@@ -436,6 +479,8 @@ import { useRoute } from 'vue-router';
 import { loadScriptsInOrder, onixLegacyScripts } from '../loadScripts';
 import { img, teamImage } from '../images';
 import { fetchTeamMembers, teamIntro } from '../content/teamApi';
+import { leaderMembers, leadersIntro } from '../content/leaders';
+import { designs } from '../content/designs';
 import { zeloFeatures } from '../content/zelo';
 import ContactForm from '../components/ContactForm.vue';
 
@@ -559,6 +604,116 @@ watch(
   margin-top: -10px;
   margin-bottom: 30px;
   color: #7a7a7a;
+}
+
+.our-leaders {
+  padding: 90px 0 40px;
+  background: #fff;
+}
+
+.our-leaders .section-heading {
+  text-align: center;
+}
+
+.our-leaders .section-heading h2 {
+  margin: 0 auto;
+}
+
+.our-leaders .section-heading > span {
+  display: block;
+  opacity: 1;
+  color: #ff695f;
+  font-size: 22px;
+  letter-spacing: 0.06em;
+  margin-top: 18px;
+  margin-bottom: 12px;
+  line-height: 1.6;
+}
+
+.leaders-subtitle {
+  margin-top: 8px;
+  margin-bottom: 40px;
+  color: #7a7a7a;
+  line-height: 1.8;
+}
+
+.leaders-grid {
+  --bs-gutter-x: 1.75rem;
+  --bs-gutter-y: 1.75rem;
+  margin-bottom: 10px;
+}
+
+.leader-card {
+  background: #fff;
+  border-radius: 24px;
+  padding: 32px 26px 34px;
+  text-align: center;
+  box-shadow: 0 0 18px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  margin-bottom: 10px;
+  border: 1px solid rgba(3, 164, 237, 0.08);
+}
+
+.leader-card-photo {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto 22px;
+  border: 1px solid #000;
+  flex-shrink: 0;
+}
+
+.leader-card-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.leader-card h4 {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #2a2a2a;
+}
+
+.leader-card span {
+  display: block;
+  color: #03a4ed;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+
+.leader-card p {
+  margin: 0;
+  color: #7a7a7a;
+  font-size: 15px;
+  line-height: 1.75;
+  flex: 1;
+}
+
+.leader-readmore {
+  display: inline-block;
+  margin-top: 16px;
+  color: #03a4ed;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.leader-readmore:hover {
+  color: #0284c7;
+  text-decoration: underline;
+}
+
+.leaders-more-btn {
+  display: inline-block;
+  margin-top: 18px;
+  margin-bottom: 20px;
 }
 
 .our-team {
@@ -758,17 +913,61 @@ watch(
 .template-pills .pill {
   border: 1px solid rgba(255, 255, 255, 0.7);
   background: rgba(255, 255, 255, 0.12);
-  color: #fff;
+  color: #fff !important;
   padding: 10px 18px;
   border-radius: 999px;
   font-size: 14px;
   font-weight: 500;
+  text-decoration: none !important;
   transition: all 0.2s ease;
+  cursor: pointer;
 }
 
 .template-pills .pill:hover {
   background: rgba(255, 255, 255, 0.22);
   transform: translateY(-1px);
+  color: #fff !important;
+}
+
+.template-and-so-on {
+  display: inline-flex;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 14px;
+  font-weight: 500;
+  padding: 10px 4px;
+}
+
+.template-custom-cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 18px;
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.template-contact-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 22px;
+  border-radius: 999px;
+  background: #fff;
+  color: #03a4f1 !important;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none !important;
+  transition: all 0.2s ease;
+}
+
+.template-contact-btn:hover {
+  background: rgba(255, 255, 255, 0.92);
+  transform: translateY(-1px);
+  color: #0284c7 !important;
 }
 
 .subscribe-footnote {
@@ -810,6 +1009,10 @@ watch(
 
 @media (max-width: 991px) {
   .cs-box {
+    margin-bottom: 22px;
+  }
+
+  .leader-card {
     margin-bottom: 22px;
   }
 

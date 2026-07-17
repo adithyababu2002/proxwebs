@@ -91,6 +91,7 @@ Route::view('/webuser/{any?}', 'admin')->where('any', '.*')->name('admin');
 Route::view('/services', 'onix-vue');
 Route::view('/features', 'onix-vue');
 Route::view('/features/{slug}', 'onix-vue')->where('slug', '[\w\-]+');
+Route::view('/designs', 'onix-vue');
 Route::view('/about', 'onix-vue');
 Route::view('/team', 'onix-vue');
 Route::view('/zelo', 'onix-vue');

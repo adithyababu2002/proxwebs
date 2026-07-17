@@ -3,18 +3,24 @@ import HomePage from './pages/HomePage.vue';
 import AboutPage from './pages/AboutPage.vue';
 import ServicesPage from './pages/ServicesPage.vue';
 import TeamPage from './pages/TeamPage.vue';
+import LeadersPage from './pages/LeadersPage.vue';
+import LeaderDetailPage from './pages/LeaderDetailPage.vue';
 import ZeloPage from './pages/ZeloPage.vue';
 import ContactPage from './pages/ContactPage.vue';
 import OverviewPage from './pages/OverviewPage.vue';
 import FeaturesPage from './pages/FeaturesPage.vue';
 import FeatureDetailPage from './pages/FeatureDetailPage.vue';
+import DesignsPage from './pages/DesignsPage.vue';
 
 const routes = [
     { path: '/', name: 'home', component: HomePage, meta: { sectionId: 'top' } },
     { path: '/services', name: 'services', component: ServicesPage },
     { path: '/features', name: 'features', component: FeaturesPage },
     { path: '/features/:slug', name: 'feature-detail', component: FeatureDetailPage },
+    { path: '/designs', name: 'designs', component: DesignsPage },
     { path: '/about', name: 'about', component: AboutPage },
+    { path: '/leaders', name: 'leaders', component: LeadersPage },
+    { path: '/leaders/:slug', name: 'leader-detail', component: LeaderDetailPage },
     { path: '/team', name: 'team', component: TeamPage },
     { path: '/zelo', name: 'zelo', component: ZeloPage },
     { path: '/overview', name: 'overview', component: OverviewPage },
@@ -28,7 +34,7 @@ export const router = createRouter({
     history: createWebHistory(),
     routes,
     scrollBehavior(to) {
-        if (['about', 'services', 'features', 'feature-detail', 'team', 'zelo', 'contact', 'overview'].includes(to.name)) {
+        if (['about', 'services', 'features', 'feature-detail', 'designs', 'leaders', 'leader-detail', 'team', 'zelo', 'contact', 'overview'].includes(to.name)) {
             return { top: 0 };
         }
 
